@@ -30,7 +30,7 @@ class Computer(Document):
     processor: str
     ram: str
     network: Network
-    create_data: datetime.datetime = datetime.datetime.now()
+    create_data: datetime.datetime | None = datetime.datetime.now()
 
     class Config:
         json_schema_extra = {

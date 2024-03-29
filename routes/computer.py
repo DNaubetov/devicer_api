@@ -3,6 +3,7 @@ from beanie import PydanticObjectId
 from database.connection import Database
 from fastapi import APIRouter, HTTPException, status
 from models.computers import Computer, ComputerUpdate
+from core.create_new import check_computer_from_db
 
 computers_router = APIRouter(
     tags=["Computers"]
@@ -11,13 +12,15 @@ computers_router = APIRouter(
 computers_database = Database(Computer)
 
 
-@computers_router.get("/", response_model=List[Computer])
+@computers_router.get("/", response_model=List[Computer],
+                      summary='Получение всех записей из бд с компьютерами')
 async def retrieve_all_computers() -> List[Computer]:
     controllers = await computers_database.get_all()
     return controllers
 
 
-@computers_router.get("/{id}", response_model=Computer)
+@computers_router.get("/{id}", response_model=Computer,
+                      summary='Получение одной записи из бд с компьютерами')
 async def retrieve_computer(id: PydanticObjectId) -> Computer:
     controller = await computers_database.get(id)
     if not controller:
@@ -28,23 +31,17 @@ async def retrieve_computer(id: PydanticObjectId) -> Computer:
     return controller
 
 
-@computers_router.post("/new")
+@computers_router.post("/new", summary='Создание нового компьютера')
 async def create_computer(body: Computer) -> dict:
-    data = list()
-    user_all_data_db = await Computer.find(Computer.user_name == body.user_name).to_list()
-    for user in user_all_data_db:
-        setattr(user, 'id', None)
-    print(user_all_data_db[-1] == body)
-    if body in user_all_data_db:
+    if check_computer_from_db(body):
         return {"message": "Данный пользователь уже в системе есть"}
-
-    # await computers_database.save(body)
+    await computers_database.save(body)
     return {
         "message": "Computers created successfully"
     }
 
 
-@computers_router.put("/{id}", response_model=Computer)
+@computers_router.put("/{id}", response_model=Computer, summary='Изменение данных по компьютеру')
 async def update_computer(id: PydanticObjectId, body: ComputerUpdate) -> Computer:
     updated_controller = await computers_database.update(id, body)
     if not updated_controller:
