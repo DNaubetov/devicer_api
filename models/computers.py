@@ -1,5 +1,8 @@
+import datetime
+
 from pydantic import BaseModel
 from beanie import Document
+import database
 
 data = {'comp_name': 'DESKTOP-10IM671',
         'user name': 'a.xayrullayev',
@@ -27,6 +30,7 @@ class Computer(Document):
     processor: str
     ram: str
     network: Network
+    create_data: datetime.datetime = datetime.datetime.now()
 
     class Config:
         json_schema_extra = {
@@ -36,7 +40,9 @@ class Computer(Document):
                         'processor': 'Intel(R) Core(TM) i5-10500T CPU @ 2.30GHz',
                         'ram': '15.78',
                         'network': {'ethernet': {'ip': '10.40.9.189', 'mac': '38-CA-84-4D-02-43'},
-                                    'wireless_network': {'ip': '10.40.9.177', 'mac': '04-CF-4B-89-7A-97'}}}
+                                    'wireless_network': {'ip': '10.40.9.177', 'mac': '04-CF-4B-89-7A-97'}},
+                        'create_data': datetime.datetime.now()
+                        }
 
         }
 
@@ -51,6 +57,7 @@ class ComputerUpdate(BaseModel):
     processor: str
     ram: str
     network: Network
+    create_data: datetime.datetime = datetime.datetime.now()
 
     class Config:
         json_schema_extra = {
@@ -60,6 +67,8 @@ class ComputerUpdate(BaseModel):
                         'processor': 'Intel(R) Core(TM) i5-10500T CPU @ 2.30GHz',
                         'ram': '15.78',
                         'network': {'ethernet': {'ip': '10.40.9.189', 'mac': '38-CA-84-4D-02-43'},
-                                    'wireless_network': {'ip': '10.40.9.177', 'mac': '04-CF-4B-89-7A-97'}}}
+                                    'wireless_network': {'ip': '10.40.9.177', 'mac': '04-CF-4B-89-7A-97'}},
+                        'create_data': datetime.datetime.now()
+                        }
 
         }
