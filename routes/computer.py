@@ -33,7 +33,7 @@ async def retrieve_computer(id: PydanticObjectId) -> Computer:
 
 @computers_router.post("/new", summary='Создание нового компьютера')
 async def create_computer(body: Computer) -> dict:
-    if check_computer_from_db(body):
+    if await check_computer_from_db(body):
         return {"message": "Данный пользователь уже в системе есть"}
     await computers_database.save(body)
     return {

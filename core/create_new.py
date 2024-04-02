@@ -8,6 +8,4 @@ async def check_computer_from_db(body: Computer):
     for user in user_all_data_db:
         setattr(user, 'id', None)
         setattr(user, 'create_data', None)
-    if data in user_all_data_db:
-        return True
-    return False
+    return data in user_all_data_db
