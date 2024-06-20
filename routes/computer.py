@@ -1,5 +1,6 @@
 import datetime
-from typing import List
+import uuid
+from typing import List, Dict
 from beanie import PydanticObjectId
 from database.connection import Database
 from fastapi import APIRouter, HTTPException, status
@@ -11,6 +12,14 @@ computers_router = APIRouter(
 )
 
 computers_database = Database(Computer)
+
+
+@computers_router.get("/uuid", response_model=Dict[uuid.UUID, List[Computer]],
+                      summary='Получение всех записей из бд с компьютерами uuid')
+async def retrieve_all_computers_set() -> Dict[uuid.UUID, List[Computer]]:
+    controllers = await computers_database.get_all()
+    controllers_uuid_list = list(set(map(lambda x: x.uuid_pc, controllers)))
+    return {x: list(filter(lambda y: x == y.uuid_pc, controllers)) for x in controllers_uuid_list}
 
 
 @computers_router.get("/", response_model=List[Computer],
